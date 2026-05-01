@@ -1,0 +1,14 @@
+
+streamlit
+pandas
+numpy
+scikit-learn
+lightgbm
+xgboost
+optuna
+requests
+beautifulsoup4
+lxml
+joblib
+python-dotenv
+firebase-admin
