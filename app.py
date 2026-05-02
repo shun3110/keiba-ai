@@ -2,80 +2,138 @@ import streamlit as st
 
 import random
 
-st.set_page_config(page_title="KEIBA AI COMPLETE SYSTEM", page_icon="🏇")
+st.set_page_config(page_title="KEIBA AI PRO", page_icon="🐎")
 
-st.title("🏇 KEIBA AI COMPLETE SYSTEM")
+st.title("🐎 KEIBA AI PRO")
 
-horse = st.text_input("馬名", "サンプルホース")
+st.subheader("AI競馬予想システム")
 
-odds = st.number_input("単勝オッズ", 1.0, 999.9, 5.0)
+# 入力
 
-if st.button("AI解析"):
+horse = st.text_input("馬名")
 
-    score = random.uniform(0, 1)
+odds = st.number_input("単勝オッズ", min_value=1.0, value=5.0)
 
-    st.subheader("AI解析結果")
+st.header("📊 AI分析項目")
 
-    st.metric("期待値", round(score, 2))
+speed = st.slider("スピード指数", 0, 100, 70)
 
-    if score >= 0.75:
+stamina = st.slider("スタミナ指数", 0, 100, 65)
 
-        rank = "SS"
+jockey = st.slider("騎手評価", 0, 100, 75)
 
-        comment = "🔥 超本命級！期待値かなり高い"
+track = st.slider("馬場適性", 0, 100, 60)
 
-        buy = "単勝・馬連"
+distance = st.slider("距離適性", 0, 100, 70)
 
-    elif score >= 0.55:
+form = st.slider("近走状態", 0, 100, 68)
 
-        rank = "S"
+if st.button("AI予想開始"):
 
-        comment = "✅ 好走期待。軸候補"
+    # AIスコア
 
-        buy = "単勝・複勝"
+    ai_score = round(
 
-    elif score >= 0.35:
+        (speed + stamina + jockey + track + distance + form) / 6,
 
-        rank = "A"
+        1
 
-        comment = "⚠️ 展開次第"
+    )
 
-        buy = "複勝"
+    # 勝率計算
+
+    win_rate = round(ai_score / 100 * 45, 1)
+
+    # 複勝率
+
+    place_rate = round(ai_score / 100 * 75, 1)
+
+    # 期待値
+
+    value = round((ai_score / odds), 2)
+
+    st.header("📈 AI総合評価")
+
+    st.metric("AIスコア", ai_score)
+
+    st.metric("勝率", f"{win_rate}%")
+
+    st.metric("複勝率", f"{place_rate}%")
+
+    st.metric("期待値", value)
+
+    # 評価
+
+    if value >= 15:
+
+        st.success("🔥 超期待値馬")
+
+    elif value >= 10:
+
+        st.info("✅ 狙い目")
 
     else:
 
-        rank = "C"
+        st.warning("⚠ 人気先行")
 
-        comment = "❌ 見送り推奨"
+    # 券種別予想
 
-        buy = "購入非推奨"
+    st.header("🎯 券種別AI予想")
 
-    st.success(f"AIランク : {rank}")
+    st.write(f"🥇 単勝：{horse}")
 
-    st.write("### 自動買い目")
+    st.write(f"🥈 複勝：{horse}")
 
-    st.write(buy)
+    st.write(f"🎯 ワイド：{horse} - 穴馬候補")
 
-    st.write("### AIコメント")
+    st.write(f"🎯 馬連：{horse} - 対抗馬")
 
-    st.write(comment)
+    st.write(f"🎯 馬単：{horse} → 対抗馬")
 
-    win_rate = round(score * 100, 1)
+    st.write(f"🔥 3連複：{horse} - 対抗馬 - 穴馬")
 
-    recovery = round((score * odds) * 100, 1)
+    st.write(f"🔥 3連単：{horse} → 対抗馬 → 穴馬")
 
-    st.write("### 勝率")
+    # AIコメント
 
-    st.progress(int(win_rate))
+    comments = [
 
-    st.write(f"{win_rate}%")
+        f"{horse}は展開次第で好走可能。",
 
-    st.write("### 回収率")
+        f"{horse}は騎手評価が高く期待。",
 
-    st.progress(min(int(recovery), 100))
+        f"{horse}は穴馬として面白い存在。",
 
-    st.write(f"{recovery}%")
+        f"{horse}は安定感が高い。",
 
-    if odds >= 10 and score >= 0.5:
+        f"{horse}は高配当演出の可能性あり。",
 
-        st.warning("💥 AI穴馬検知")
+    ]
+
+    st.header("🤖 AIコメント")
+
+    st.write(random.choice(comments))
+
+    # 最終評価
+
+    st.header("🏆 AI最終判定")
+
+    if ai_score >= 80:
+
+        st.success("S評価 ★ 激アツ")
+
+    elif ai_score >= 70:
+
+        st.info("A評価 ★ 有力")
+
+    elif ai_score >= 60:
+
+        st.warning("B評価 ★ 注意")
+
+    else:
+
+        st.error("C評価 ★ 厳しい")
+
+st.divider()
+
+st.caption("KEIBA AI PRO SYSTEM")
